@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Seguimiento de Visitas - CRM Grupo Gloria</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px; }
+        th { background: #f2f2f2; }
+        .acciones button { margin-right: 5px; }
+        .volver { display: inline-block; margin-bottom: 15px; }
+        .filtros { margin-top: 25px; }
+        .filtros select, .filtros input { margin-right: 10px; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="volver" href="dashboard.html">&larr; Volver al Dashboard</a>
+
+    <h2>Seguimiento de Visitas de Vendedores</h2>
+
+    <form id="formVisita" onsubmit="return guardarVisita(event)">
+
+        <label>Vendedor</label>
+        <input type="text" id="vendedor" required placeholder="Nombre del vendedor">
+
+        <label>Cliente</label>
+        <select id="cliente" required>
+            <option value="">-- Seleccionar cliente --</option>
+        </select>
+
+        <label>Fecha de Visita</label>
+        <input type="date" id="fecha" required>
+
+        <label>Tipo de Visita</label>
+        <select id="tipo">
+            <option>Presencial</option>
+            <option>Llamada</option>
+            <option>Virtual</option>
+        </select>
+
+        <label>Resultado</label>
+        <select id="resultado">
+            <option>Pedido generado</option>
+            <option>Sin pedido</option>
+            <option>Reclamo</option>
+            <option>En seguimiento</option>
+        </select>
+
+        <label>Observaciones</label>
+        <textarea id="observaciones"></textarea>
+
+        <input type="hidden" id="editId">
+
+        <button type="submit">Registrar Visita</button>
+
+    </form>
+
+    <div class="filtros">
+        <label>Filtrar por vendedor:</label>
+        <select id="filtroVendedor" onchange="renderTabla()">
+            <option value="">Todos</option>
+        </select>
+    </div>
+
+    <h3>Historial de Visitas</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Vendedor</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Resultado</th>
+                <th>Observaciones</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaVisitas"></tbody>
+    </table>
+
+</div>
+
+<script>
+const CLIENTES_KEY = "gloria_clientes";
+const VISITAS_KEY = "gloria_visitas";
+
+function obtenerClientes() {
+    return JSON.parse(localStorage.getItem(CLIENTES_KEY)) || [];
+}
+
+function obtenerVisitas() {
+    return JSON.parse(localStorage.getItem(VISITAS_KEY)) || [];
+}
+
+function guardarVisitas(lista) {
+    localStorage.setItem(VISITAS_KEY, JSON.stringify(lista));
+}
+
+function cargarClientesEnSelect() {
+    const select = document.getElementById("cliente");
+    const clientes = obtenerClientes();
+
+    select.innerHTML = '<option value="">-- Seleccionar cliente --</option>';
+
+    if (clientes.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "Sin registrar";
+        opt.textContent = "No hay clientes registrados (ir a Registro de Clientes)";
+        select.appendChild(opt);
+        return;
+    }
+
+    clientes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.nombre;
+        opt.textContent = c.nombre + " - " + c.documento;
+        select.appendChild(opt);
+    });
+}
+
+function cargarFiltroVendedores() {
+    const select = document.getElementById("filtroVendedor");
+    const visitas = obtenerVisitas();
+    const vendedores = [...new Set(visitas.map(v => v.vendedor))];
+
+    select.innerHTML = '<option value="">Todos</option>';
+    vendedores.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v;
+        opt.textContent = v;
+        select.appendChild(opt);
+    });
+}
+
+function guardarVisita(e) {
+    e.preventDefault();
+
+    const editId = document.getElementById("editId").value;
+    const visita = {
+        id: editId ? Number(editId) : Date.now(),
+        vendedor: document.getElementById("vendedor").value,
+        cliente: document.getElementById("cliente").value,
+        fecha: document.getElementById("fecha").value,
+        tipo: document.getElementById("tipo").value,
+        resultado: document.getElementById("resultado").value,
+        observaciones: document.getElementById("observaciones").value
+    };
+
+    let visitas = obtenerVisitas();
+
+    if (editId) {
+        visitas = visitas.map(v => v.id === visita.id ? visita : v);
+    } else {
+        visitas.push(visita);
+    }
+
+    guardarVisitas(visitas);
+    document.getElementById("formVisita").reset();
+    document.getElementById("editId").value = "";
+    cargarFiltroVendedores();
+    renderTabla();
+
+    return false;
+}
+
+function editarVisita(id) {
+    const visita = obtenerVisitas().find(v => v.id === id);
+    if (!visita) return;
+
+    document.getElementById("vendedor").value = visita.vendedor;
+    document.getElementById("cliente").value = visita.cliente;
+    document.getElementById("fecha").value = visita.fecha;
+    document.getElementById("tipo").value = visita.tipo;
+    document.getElementById("resultado").value = visita.resultado;
+    document.getElementById("observaciones").value = visita.observaciones;
+    document.getElementById("editId").value = visita.id;
+}
+
+function eliminarVisita(id) {
+    if (!confirm("¿Eliminar este registro de visita?")) return;
+    const visitas = obtenerVisitas().filter(v => v.id !== id);
+    guardarVisitas(visitas);
+    cargarFiltroVendedores();
+    renderTabla();
+}
+
+function renderTabla() {
+    const filtro = document.getElementById("filtroVendedor").value;
+    let visitas = obtenerVisitas().sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+    if (filtro) {
+        visitas = visitas.filter(v => v.vendedor === filtro);
+    }
+
+    const tbody = document.getElementById("tablaVisitas");
+    tbody.innerHTML = "";
+
+    visitas.forEach(v => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+            <td>${v.fecha}</td>
+            <td>${v.vendedor}</td>
+            <td>${v.cliente}</td>
+            <td>${v.tipo}</td>
+            <td>${v.resultado}</td>
+            <td>${v.observaciones}</td>
+            <td class="acciones">
+                <button onclick="editarVisita(${v.id})">Editar</button>
+                <button onclick="eliminarVisita(${v.id})">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(fila);
+    });
+}
+
+cargarClientesEnSelect();
+cargarFiltroVendedores();
+renderTabla();
+</script>
+
+</body>
+</html>
