@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+
+    <link rel="stylesheet" href="registro.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="login-box">
+
+    <div class="logo">
+        <i class="fa-solid fa-user-gear"></i>
+        <h2>Registrar Usuario</h2>
+    </div>
+
+    <form>
+
+        <div class="input-box">
+            <i class="fa-solid fa-id-card"></i>
+            <input type="text" placeholder="Nombre Completo" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" placeholder="Correo Corporativo" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-briefcase"></i>
+            <select required>
+                <option value="">Seleccione un Cargo</option>
+                <option>Administrador</option>
+                <option>Supervisor</option>
+                <option>Vendedor</option>
+                <option>Asesor Comercial</option>
+            </select>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-building"></i>
+            <select required>
+                <option value="">Seleccione un Área</option>
+                <option>Ventas</option>
+                <option>Marketing</option>
+                <option>Atención al Cliente</option>
+                <option>Administración</option>
+            </select>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" placeholder="Nombre de Usuario" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" placeholder="Contraseña" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" placeholder="Confirmar Contraseña" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-circle-check"></i>
+            <select required>
+                <option value="">Estado</option>
+                <option>Activo</option>
+                <option>Inactivo</option>
+            </select>
+        </div>
+
+        <button type="submit">Registrar</button>
+
+        <p class="register">
+            ¿Ya tienes una cuenta?
+            <a href="login.html">Iniciar Sesión</a>
+        </p>
+
+    </form>
+
+</div>
+
+</body>
+</html>

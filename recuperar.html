@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <div class="logo">
+        <i class="fa-solid fa-key"></i>
+        <h2>Recuperar Contraseña</h2>
+        <p>Ingrese su correo corporativo</p>
+    </div>
+
+    <form onsubmit="return recuperar()">
+
+        <div class="input-box">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email"
+                   id="correo"
+                   placeholder="Correo Corporativo"
+                   required>
+        </div>
+
+        <button type="submit">
+            Enviar Enlace
+        </button>
+
+        <p class="register">
+            <a href="login.html">
+                <i class="fa-solid fa-arrow-left"></i>
+                Volver al inicio de sesión
+            </a>
+        </p>
+
+    </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+function recuperar(){
+
+    let correo = document.getElementById("correo").value;
+
+    if(correo==""){
+
+        Swal.fire({
+            icon:"warning",
+            title:"Campo obligatorio",
+            text:"Ingrese su correo corporativo.",
+            confirmButtonColor:"#003366"
+        });
+
+        return false;
+    }
+
+    Swal.fire({
+        icon:"success",
+        title:"Correo enviado",
+        html:`
+            <p>Se envió un enlace para restablecer su contraseña al correo:</p>
+
+            <strong style="color:#003366; font-size:16px;">
+                ${correo}
+            </strong>
+
+            <br><br>
+
+            <small>
+                Revise su bandeja de entrada o la carpeta de correo no deseado.
+            </small>
+        `,
+        confirmButtonText:"Aceptar",
+        confirmButtonColor:"#003366"
+    }).then(() => {
+
+        window.location.href="login.html";
+
+    });
+
+    return false;
+}
+
+</script>
+
+</body>
+</html>

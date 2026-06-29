@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Grupo Gloria</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Iconos -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<div class="login-box">
+
+    <div class="logo">
+        <i class="fa-solid fa-building"></i>
+        <h2>CRM Grupo Gloria</h2>
+        <p>Bienvenido</p>
+    </div>
+
+    <form onsubmit="return login()">
+
+        <div class="input-box">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="user" placeholder="Usuario" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="pass" placeholder="Contraseña" required>
+        </div>
+
+        <button type="submit">Ingresar</button>
+
+        <a href="recuperar.html" class="forgot">
+           ¿Olvidaste tu contraseña?
+        </a>
+
+        <p class="register">
+            ¿No tienes una cuenta?
+            <a href="registro.html">Registrarse</a>
+        </p>
+
+    </form>
+
+</div>
+
+<script>
+function login(){
+
+    let user = document.getElementById("user").value;
+    let pass = document.getElementById("pass").value;
+
+    if(user === "admin" && pass === "1234"){
+        window.location.href="dashboard.html";
+    }else{
+        alert("Usuario o contraseña incorrectos");
+    }
+
+    return false;
+}
+</script>
+
+</body>
+</html>

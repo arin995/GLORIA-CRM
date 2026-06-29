@@ -15,50 +15,85 @@ body{
 
 .login-box{
     width:380px;
+    max-width:100%;
     background:#fff;
     border-radius:15px;
-    padding:40px;
+    padding:12px;
     box-shadow:0 15px 35px rgba(0,0,0,.3);
 }
 
 .logo{
     text-align:center;
-    margin-bottom:30px;
+    margin-bottom:15px;
 }
 
 .logo i{
-    font-size:60px;
+    font-size:25px;
     color:#003366;
 }
 
 .logo h2{
-    margin-top:10px;
+    margin-top:6px;
     color:#003366;
-}
-
-.logo p{
-    color:#777;
+    font-size:16px;
 }
 
 .input-box{
     display:flex;
     align-items:center;
-    border:1px solid #ddd;
+    position:relative;
+    border:1px solid #dcdcdc;
     border-radius:8px;
     padding:12px;
-    margin-bottom:18px;
+    margin-bottom:12px;
+    transition:.3s;
+}
+
+.input-box:hover{
+    border-color:#00509d;
+}
+
+.input-box:focus-within{
+    border-color:#00509d;
+    box-shadow:0 0 6px rgba(0,80,157,.25);
 }
 
 .input-box i{
     color:#003366;
     margin-right:10px;
+    font-size:16px;
+    min-width:18px;
 }
 
-.input-box input{
+.input-box input,
+.input-box select{
+    width:100%;
     border:none;
     outline:none;
-    width:100%;
+    background:transparent;
     font-size:15px;
+    color:#333;
+}
+
+.input-box select{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    cursor:pointer;
+    padding-right:20px;
+}
+
+.input-box::after{
+    content:"▼";
+    position:absolute;
+    right:15px;
+    color:#003366;
+    font-size:11px;
+    pointer-events:none;
+}
+
+.input-box:has(input)::after{
+    content:"";
 }
 
 button{
@@ -69,30 +104,32 @@ button{
     background:#003366;
     color:white;
     font-size:16px;
+    font-weight:bold;
     cursor:pointer;
     transition:.3s;
 }
 
 button:hover{
     background:#00509d;
+    transform:translateY(-2px);
 }
 
-.forgot{
-    display:block;
-    text-align:right;
-    margin-top:12px;
-    color:#003366;
-    text-decoration:none;
-    font-size:14px;
+button:active{
+    transform:scale(.98);
 }
 
 .register{
     text-align:center;
-    margin-top:25px;
+    margin-top:12px;
+    font-size:14px;
 }
 
 .register a{
     color:#00509d;
     text-decoration:none;
     font-weight:bold;
+}
+
+.register a:hover{
+    text-decoration:underline;
 }
