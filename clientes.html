@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Clientes - CRM Grupo Gloria</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px; }
+        th { background: #f2f2f2; }
+        .acciones button { margin-right: 5px; }
+        .volver { display: inline-block; margin-bottom: 15px; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="volver" href="dashboard.html">&larr; Volver al Dashboard</a>
+
+    <h2>Registro de Clientes</h2>
+
+    <form id="formCliente" onsubmit="return guardarCliente(event)">
+
+        <label>Razón Social / Nombre</label>
+        <input type="text" id="nombre" required>
+
+        <label>RUC / DNI</label>
+        <input type="text" id="documento" required>
+
+        <label>Tipo de Cliente</label>
+        <select id="tipo">
+            <option>Mayorista</option>
+            <option>Minorista</option>
+            <option>Distribuidor</option>
+            <option>Autoservicio</option>
+        </select>
+
+        <label>Teléfono</label>
+        <input type="text" id="telefono">
+
+        <label>Correo</label>
+        <input type="email" id="email">
+
+        <label>Dirección</label>
+        <input type="text" id="direccion">
+
+        <label>Vendedor Asignado</label>
+        <input type="text" id="vendedor" placeholder="Nombre del vendedor">
+
+        <label>Estado</label>
+        <select id="estado">
+            <option>Activo</option>
+            <option>Inactivo</option>
+        </select>
+
+        <input type="hidden" id="editId">
+
+        <button type="submit">Guardar Cliente</button>
+
+    </form>
+
+    <h3>Clientes Registrados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Documento</th>
+                <th>Tipo</th>
+                <th>Teléfono</th>
+                <th>Vendedor</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaClientes"></tbody>
+    </table>
+
+</div>
+
+<script>
+const STORAGE_KEY = "gloria_clientes";
+
+function obtenerClientes() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function guardarClientes(lista) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+}
+
+function guardarCliente(e) {
+    e.preventDefault();
+
+    const editId = document.getElementById("editId").value;
+    const cliente = {
+        id: editId ? Number(editId) : Date.now(),
+        nombre: document.getElementById("nombre").value,
+        documento: document.getElementById("documento").value,
+        tipo: document.getElementById("tipo").value,
+        telefono: document.getElementById("telefono").value,
+        email: document.getElementById("email").value,
+        direccion: document.getElementById("direccion").value,
+        vendedor: document.getElementById("vendedor").value,
+        estado: document.getElementById("estado").value
+    };
+
+    let clientes = obtenerClientes();
+
+    if (editId) {
+        clientes = clientes.map(c => c.id === cliente.id ? cliente : c);
+    } else {
+        clientes.push(cliente);
+    }
+
+    guardarClientes(clientes);
+    document.getElementById("formCliente").reset();
+    document.getElementById("editId").value = "";
+    renderTabla();
+
+    return false;
+}
+
+function editarCliente(id) {
+    const cliente = obtenerClientes().find(c => c.id === id);
+    if (!cliente) return;
+
+    document.getElementById("nombre").value = cliente.nombre;
+    document.getElementById("documento").value = cliente.documento;
+    document.getElementById("tipo").value = cliente.tipo;
+    document.getElementById("telefono").value = cliente.telefono;
+    document.getElementById("email").value = cliente.email;
+    document.getElementById("direccion").value = cliente.direccion;
+    document.getElementById("vendedor").value = cliente.vendedor;
+    document.getElementById("estado").value = cliente.estado;
+    document.getElementById("editId").value = cliente.id;
+}
+
+function eliminarCliente(id) {
+    if (!confirm("¿Eliminar este cliente?")) return;
+    const clientes = obtenerClientes().filter(c => c.id !== id);
+    guardarClientes(clientes);
+    renderTabla();
+}
+
+function renderTabla() {
+    const clientes = obtenerClientes();
+    const tbody = document.getElementById("tablaClientes");
+    tbody.innerHTML = "";
+
+    clientes.forEach(c => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+            <td>${c.nombre}</td>
+            <td>${c.documento}</td>
+            <td>${c.tipo}</td>
+            <td>${c.telefono}</td>
+            <td>${c.vendedor}</td>
+            <td>${c.estado}</td>
+            <td class="acciones">
+                <button onclick="editarCliente(${c.id})">Editar</button>
+                <button onclick="eliminarCliente(${c.id})">Eliminar</button>
+            </td>
+        `;
+        tbody.appendChild(fila);
+    });
+}
+
+renderTabla();
+</script>
+
+</body>
+</html>

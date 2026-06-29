@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes Comerciales - CRM Grupo Gloria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="volver" href="dashboard.html">&larr; Volver al Dashboard</a>
+
+    <h2>Reportes Comerciales</h2>
+
+    <div class="filtros">
+        <label>Desde:</label>
+        <input type="date" id="desde" onchange="generarReporte()">
+        <label>Hasta:</label>
+        <input type="date" id="hasta" onchange="generarReporte()">
+        <button type="button" onclick="limpiarFiltro()">Limpiar filtro</button>
+        <button type="button" onclick="exportarCSV()">Exportar CSV</button>
+    </div>
+
+    <h3>Resumen General</h3>
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="valor" id="mPedidos">0</div>
+            <div class="etiqueta">Pedidos totales</div>
+        </div>
+        <div class="metric-card">
+            <div class="valor" id="mMonto">S/ 0.00</div>
+            <div class="etiqueta">Monto vendido</div>
+        </div>
+        <div class="metric-card">
+            <div class="valor" id="mEntregados">0</div>
+            <div class="etiqueta">Entregados</div>
+        </div>
+        <div class="metric-card">
+            <div class="valor" id="mPendientes">0</div>
+            <div class="etiqueta">Pendientes / en proceso</div>
+        </div>
+    </div>
+
+    <h3>Ventas por Vendedor</h3>
+    <div id="reporteVendedores"></div>
+
+    <h3>Ventas por Producto</h3>
+    <div id="reporteProductos"></div>
+
+    <h3>Pedidos por Estado</h3>
+    <div id="reporteEstados"></div>
+
+    <h3>Top 5 Clientes</h3>
+    <div id="reporteClientes"></div>
+
+</div>
+
+<script>
+const PEDIDOS_KEY = "gloria_pedidos";
+
+function obtenerPedidos() {
+    return JSON.parse(localStorage.getItem(PEDIDOS_KEY)) || [];
+}
+
+function filtrarPorFecha(pedidos) {
+    const desde = document.getElementById("desde").value;
+    const hasta = document.getElementById("hasta").value;
+
+    return pedidos.filter(p => {
+        if (desde && p.fecha < desde) return false;
+        if (hasta && p.fecha > hasta) return false;
+        return true;
+    });
+}
+
+function limpiarFiltro() {
+    document.getElementById("desde").value = "";
+    document.getElementById("hasta").value = "";
+    generarReporte();
+}
+
+function agrupar(pedidos, campo) {
+    const grupos = {};
+    pedidos.forEach(p => {
+        const clave = p[campo];
+        if (!grupos[clave]) grupos[clave] = { cantidad: 0, monto: 0 };
+        grupos[clave].cantidad += 1;
+        grupos[clave].monto += p.total;
+    });
+    return grupos;
+}
+
+function renderBarras(contenedorId, grupos, maxBarras) {
+    const contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = "";
+
+    let entradas = Object.entries(grupos).sort((a, b) => b[1].monto - a[1].monto);
+    if (maxBarras) entradas = entradas.slice(0, maxBarras);
+
+    if (entradas.length === 0) {
+        contenedor.innerHTML = '<p style="color:#888; font-size:14px;">Sin datos para el periodo seleccionado.</p>';
+        return;
+    }
+
+    const maxMonto = Math.max(...entradas.map(e => e[1].monto));
+
+    entradas.forEach(([nombre, datos]) => {
+        const porcentaje = maxMonto > 0 ? (datos.monto / maxMonto) * 100 : 0;
+        const fila = document.createElement("div");
+        fila.className = "barra-fila";
+        fila.innerHTML = `
+            <div class="nombre">${nombre}</div>
+            <div class="barra-fondo"><div class="barra-relleno" style="width:${porcentaje.toFixed(0)}%"></div></div>
+            <div class="valor">S/ ${datos.monto.toFixed(2)}</div>
+        `;
+        contenedor.appendChild(fila);
+    });
+}
+
+function generarReporte() {
+    const pedidos = filtrarPorFecha(obtenerPedidos());
+
+    const totalMonto = pedidos.reduce((acc, p) => acc + p.total, 0);
+    const entregados = pedidos.filter(p => p.estado === "Entregado").length;
+    const pendientes = pedidos.filter(p => p.estado === "Pendiente" || p.estado === "En proceso").length;
+
+    document.getElementById("mPedidos").textContent = pedidos.length;
+    document.getElementById("mMonto").textContent = "S/ " + totalMonto.toFixed(2);
+    document.getElementById("mEntregados").textContent = entregados;
+    document.getElementById("mPendientes").textContent = pendientes;
+
+    renderBarras("reporteVendedores", agrupar(pedidos, "vendedor"));
+    renderBarras("reporteProductos", agrupar(pedidos, "producto"));
+    renderBarras("reporteEstados", agrupar(pedidos, "estado"));
+    renderBarras("reporteClientes", agrupar(pedidos, "cliente"), 5);
+}
+
+function exportarCSV() {
+    const pedidos = filtrarPorFecha(obtenerPedidos());
+
+    if (pedidos.length === 0) {
+        alert("No hay pedidos para exportar en el periodo seleccionado.");
+        return;
+    }
+
+    let csv = "Fecha,Cliente,Producto,Cantidad,Precio,Total,Vendedor,Estado,Observaciones\n";
+    pedidos.forEach(p => {
+        csv += [p.fecha, p.cliente, p.producto, p.cantidad, p.precio, p.total.toFixed(2), p.vendedor, p.estado, (p.observaciones || "").replace(/,/g, ";")].join(",") + "\n";
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.download = "reporte_comercial_gloria.csv";
+    enlace.click();
+    URL.revokeObjectURL(url);
+}
+
+generarReporte();
+</script>
+
+</body>
+</html>
