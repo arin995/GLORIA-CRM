@@ -1,3 +1,210 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 30px 15px;
+    color: #2c2c2c;
+}
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #b3001b;
+    margin-top: 0;
+}
+
+h3 {
+    color: #444;
+    border-bottom: 2px solid #b3001b;
+    padding-bottom: 6px;
+    margin-top: 30px;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+textarea {
+    min-height: 70px;
+    resize: vertical;
+}
+
+button {
+    background: #b3001b;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+button:hover {
+    background: #8a0015;
+}
+
+a {
+    color: #b3001b;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+    color: #444;
+}
+
+tr:hover {
+    background: #fafafa;
+}
+
+.acciones button {
+    background: #555;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-top: 0;
+    font-size: 12px;
+}
+
+.acciones button:hover {
+    background: #333;
+}
+
+.volver {
+    display: inline-block;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.badge-pendiente { background: #e0a800; }
+.badge-proceso { background: #007bff; }
+.badge-entregado { background: #28a745; }
+.badge-cancelado { background: #dc3545; }
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.metric-card {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 14px;
+    text-align: center;
+}
+
+.metric-card .valor {
+    font-size: 22px;
+    font-weight: bold;
+    color: #b3001b;
+}
+
+.metric-card .etiqueta {
+    font-size: 12px;
+    color: #777;
+    margin-top: 4px;
+}
+
+.barra-fila {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 13px;
+}
+
+.barra-fila .nombre {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.barra-fila .barra-fondo {
+    flex-grow: 1;
+    background: #eee;
+    border-radius: 4px;
+    height: 16px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+.barra-fila .barra-relleno {
+    background: #b3001b;
+    height: 100%;
+}
+
+.barra-fila .valor {
+    width: 70px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.filtros {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filtros label {
+    margin: 0;
+}
+
+.filtros select, .filtros input {
+    width: auto;
+}
 *{
     margin:0;
     padding:0;
